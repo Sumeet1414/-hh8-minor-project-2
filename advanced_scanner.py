@@ -11,10 +11,10 @@ from pathlib import Path
 class AdvancedScannerApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("🛡️ Sentinel Hash Scanner - Advanced")
+        self.root.title("🛡️ Hash Scanner - Advanced")
         self.root.geometry("900x600")
         
-        # --- State Variables ---
+        
         self.signatures = set()
         self.folder_path = Path.home() / "Downloads"
         self.quarantine_folder = Path.home() / "Malware_Quarantine"
@@ -22,20 +22,20 @@ class AdvancedScannerApp:
         self.is_monitoring = False
         self.stop_event = threading.Event()
 
-        # Create Quarantine Folder if not exists
+        
         if not os.path.exists(self.quarantine_folder):
             os.makedirs(self.quarantine_folder)
 
-        # --- STYLE CONFIGURATION ---
+        
         style = ttk.Style()
         style.theme_use('clam')
         style.configure("Treeview", rowheight=25)
         style.configure("TButton", padding=6, font=("Segoe UI", 10))
         style.configure("Header.TLabel", font=("Segoe UI", 12, "bold"))
 
-        # --- LAYOUT FRAMES ---
         
-        # 1. Top Bar (Configuration)
+        
+        
         self.frame_top = tk.Frame(root, bg="#f0f0f0", pady=10)
         self.frame_top.pack(fill="x")
         
@@ -49,7 +49,7 @@ class AdvancedScannerApp:
         self.lbl_folder.pack(side="left")
         ttk.Button(self.frame_top, text="📂 Change", command=self.choose_folder).pack(side="left", padx=5)
 
-        # 2. Dashboard Stats
+        
         self.frame_stats = tk.Frame(root, pady=10)
         self.frame_stats.pack(fill="x", padx=10)
         
@@ -59,7 +59,7 @@ class AdvancedScannerApp:
         self.lbl_status = ttk.Label(self.frame_stats, text="🟢 System Idle", style="Header.TLabel", foreground="green")
         self.lbl_status.pack(side="right", padx=20)
 
-        # 3. Controls & Progress
+        
         self.frame_controls = tk.LabelFrame(root, text="Scanner Controls", padx=10, pady=10)
         self.frame_controls.pack(fill="x", padx=10, pady=5)
         
@@ -72,7 +72,7 @@ class AdvancedScannerApp:
         self.progress = ttk.Progressbar(self.frame_controls, orient="horizontal", mode="indeterminate")
         self.progress.pack(side="right", fill="x", expand=True, padx=10)
 
-        # 4. Results Table (Treeview)
+        
         self.tree_frame = tk.Frame(root)
         self.tree_frame.pack(fill="both", expand=True, padx=10, pady=5)
         
@@ -91,14 +91,14 @@ class AdvancedScannerApp:
         scrollbar.pack(side="right", fill="y")
         self.tree.pack(fill="both", expand=True)
 
-        # 5. Bottom Actions (Quarantine)
+        
         self.frame_bottom = tk.Frame(root, pady=10)
         self.frame_bottom.pack(fill="x", padx=10)
         
         ttk.Button(self.frame_bottom, text="🚫 Quarantine Selected", command=self.quarantine_selected).pack(side="right")
         ttk.Button(self.frame_bottom, text="🗑️ Clear List", command=self.clear_list).pack(side="right", padx=10)
 
-    # --- LOGIC ---
+
 
     def log_threat(self, filename, status, filepath):
         """Insert a row into the table"""
@@ -128,16 +128,16 @@ class AdvancedScannerApp:
                     if not row or row[0].startswith('#'): continue
                     
                     for item in row:
-                        # --- CRITICAL FIX: Remove quotes (" or ') ---
+                        
                         clean_item = item.strip().strip('"').strip("'")
                         
                         if len(clean_item) == 32:
                             temp_sigs.add(clean_item)
-                            # Do not break immediately; some lines might have multiple hashes
+                            
             
             self.signatures = temp_sigs
             
-            # Update GUI safely
+            
             self.root.after(0, lambda: self.lbl_sig_count.config(text=f"✅ Signatures: {len(self.signatures)}", foreground="green"))
             self.root.after(0, lambda: self.lbl_status.config(text="🟢 Ready", foreground="green"))
             
@@ -168,7 +168,7 @@ class AdvancedScannerApp:
             for file in files:
                 file_path = os.path.join(root_dir, file)
                 
-                # Check MD5
+                
                 local_md5 = self.calculate_md5(file_path)
                 
                 if local_md5 and local_md5 in self.signatures:
@@ -236,7 +236,6 @@ class AdvancedScannerApp:
         for item in self.tree.get_children():
             self.tree.delete(item)
 
-# --- Run ---
 if __name__ == "__main__":
     root = tk.Tk()
     app = AdvancedScannerApp(root)
